@@ -14,7 +14,7 @@ GEM
       xpath (~> 3.2)
     childprocess (1.0.1)
       rake (< 13.0)
-    ffi (1.9.18)
+    ffi (1.11.1)
     line-bot-api (1.11.0)
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
