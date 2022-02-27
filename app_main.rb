@@ -69,10 +69,10 @@ def get_movies_kinezo(url)
     charset = f.charset # 文字種を取得
     f.read # htmlを読み込んでhtmlに渡す
   end
-  
-  # 結果格納用配列
+
+  # 結果格納用配列
   movies = []
-  
+
   doc = Nokogiri::HTML.parse(html, nil, "utf-8")
   doc.xpath('//div[@class="cinemaTitle elp"]').each do |node|
     # タイトルリストを取得
@@ -80,7 +80,7 @@ def get_movies_kinezo(url)
     movie = Movie.new(title)
     movies.push(movie)
   end
-  
+
   doc.xpath('//div[@class="theaterListWrap"]').each_with_index do |node, i|
     # スケジュールリストを取得
     schedules = []
