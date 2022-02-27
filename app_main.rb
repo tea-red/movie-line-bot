@@ -16,6 +16,11 @@ class Movie
   end
 end
 
+keyword_urls = {
+  '映画' => 'https://tjoy.jp/shinjuku_wald9',
+  '映画ブルク' => 'https://tjoy.jp/yokohama_burg13'
+}
+
 get '/' do
   "Hello world"
   # 動作確認用
@@ -72,11 +77,10 @@ post '/callback' do
       case event.type
       when Line::Bot::Event::MessageType::Text
         reply_text = event.message['text']
-        case event.message['text']
-        when '映画'
-          reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
-        when '映画ブルク'
-          reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/yokohama_burg13'))
+        text = event.message['text']
+        url = keyword_urls[text]
+        unless url.nil?
+          reply_text = get_movies_info_text(get_movies_kinezo(url))
         end
         message = {
           type: 'text',
