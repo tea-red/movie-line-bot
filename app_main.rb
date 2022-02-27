@@ -19,7 +19,7 @@ end
 get '/' do
   "Hello world"
   # 動作確認用
-  get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
+  # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
   #get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
   #get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
 end
@@ -100,7 +100,7 @@ post '/callback' do
         reply_text = event.message['text']
         case event.message['text']
         when '映画'
-          reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=140feb4'))
+          reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
         when '映画ブルク'
           reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
         # when '映画仙台'
