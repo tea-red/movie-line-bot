@@ -20,8 +20,7 @@ get '/' do
   "Hello world"
   # 動作確認用
   # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
-  #get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
-  #get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
+  # get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
 end
 
 def client
@@ -29,31 +28,6 @@ def client
     config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
     config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
   }
-end
-
-def get_movies_toho(url)
-  # jsonなのでパースする
-  uri = URI.parse(url)
-  json = Net::HTTP.get(uri)
-  result = JSON.parse(json)
-
-  # パースしながらmovieを情報を格納
-  movies = []
-  result[0]["list"][0]["list"].each do |title|
-    movie = Movie.new(title["name"])
-    schedules = []
-    title["list"].each do |screen|
-      timetables = []
-      screen["list"].each do |time|
-        timetables.push(time["showingStart"] + " - " + time["showingEnd"]) if time["showingStart"] != ""
-      end
-      schedule = Schedule.new(screen["ename"], timetables)
-      schedules.push(schedule)
-    end
-    movie.schedules = schedules
-    movies.push(movie)
-  end
-  movies
 end
 
 def get_movies_kinezo(url)
@@ -103,8 +77,6 @@ post '/callback' do
           reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
         when '映画ブルク'
           reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
-        # when '映画仙台'
-        #   reply_text = get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
         end
         message = {
           type: 'text',
