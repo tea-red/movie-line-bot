@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/reloader'
 require 'line/bot'
 require 'nokogiri'
 require 'open-uri'
