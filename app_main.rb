@@ -9,13 +9,6 @@ require 'uri'
 require 'json'
 require 'date'
 
-class Schedule
-  attr_accessor :screen, :timetables
-  def initialize(screen, timetables)
-    @screen = screen; @timetables = timetables
-  end
-end
-
 class Movie
   attr_accessor :title, :schedules
   def initialize(title)
@@ -26,7 +19,7 @@ end
 get '/' do
   "Hello world"
   # 動作確認用
-  #get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=140feb4'))
+  get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
   #get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
   #get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
 end
@@ -64,35 +57,17 @@ def get_movies_toho(url)
 end
 
 def get_movies_kinezo(url)
+  opened_url= URI.open(url)
+  doc = Nokogiri::HTML(opened_url)
 
-  charset = nil
-  html = open(url) do |f|
-    charset = f.charset # 文字種を取得
-    f.read # htmlを読み込んでhtmlに渡す
-  end
-
-  # 結果格納用配列
-  movies = []
-
-  doc = Nokogiri::HTML.parse(html, nil, "utf-8")
-  doc.xpath('//div[@class="cinemaTitle elp"]').each do |node|
-    # タイトルリストを取得
-    title = node.inner_text.split("\n").select{|item| item != ""}.first
-    movie = Movie.new(title)
-    movies.push(movie)
-  end
-
-  doc.xpath('//div[@class="theaterListWrap"]').each_with_index do |node, i|
-    # スケジュールリストを取得
-    schedules = []
-    node.xpath('.//table[@class="theaterWrap"]').each do |deep_node|
-      timetables = deep_node.inner_text.split("\n").select{|item| item != ""}
-      screen = timetables.shift
-      schedule = Schedule.new(screen, timetables)
-      schedules.push(schedule)
-    end
-    movies[i].schedules = schedules
-  end
+  movies = doc.at_css('div.box-film-wapper')
+              .css('section.section-container')
+              .map do |section|
+                title = section.at_css('h5.js-title-film').text.strip
+                movie = Movie.new(title)
+                movie.schedules = section.css('p.schedule-time').map{ |time| time.text.strip }
+                movie
+              end
   movies
 end
 
@@ -101,10 +76,7 @@ def get_movies_info_text(movies)
   movies.each do |movie|
     reply_text << movie.title << "\n"
     movie.schedules.each do |schedule|
-      reply_text << schedule.screen << "\n"
-      schedule.timetables.each do |timetable|
-        reply_text << "\t" << timetable << "\n"
-      end
+      reply_text << "\t" << schedule << "\n"
     end
     reply_text << "\n"
   end
@@ -131,8 +103,8 @@ post '/callback' do
           reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=140feb4'))
         when '映画ブルク'
           reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
-        when '映画仙台'
-          reply_text = get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
+        # when '映画仙台'
+        #   reply_text = get_movies_info_text(get_movies_toho('https://hlo.tohotheater.jp/net/schedule/TNPI3050J02.do?__type__=html&__useResultInfo__=no&vg_cd=078&show_day=' + Date.today.strftime("%Y%m%d") + '&term=99'))
         end
         message = {
           type: 'text',
