@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-ruby '2.6.3'
+ruby '2.6.6'
 gem 'sinatra'
 ENV['NOKOGIRI_USE_SYSTEM_LIBRARIES'] = 'YES'
 gem 'nokogiri'
