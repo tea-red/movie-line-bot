@@ -24,8 +24,8 @@ keyword_urls = {
 get '/' do
   "Hello world"
   # 動作確認用
-  # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
-  # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/yokohama_burg13'))
+  # url = keyword_urls['映画']
+  # get_movies_info_text(get_movies_kinezo(url))
 end
 
 def client
