@@ -20,7 +20,7 @@ get '/' do
   "Hello world"
   # 動作確認用
   # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
-  # get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
+  # get_movies_info_text(get_movies_kinezo('https://tjoy.jp/yokohama_burg13'))
 end
 
 def client
@@ -76,7 +76,7 @@ post '/callback' do
         when '映画'
           reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/shinjuku_wald9'))
         when '映画ブルク'
-          reply_text = get_movies_info_text(get_movies_kinezo('http://kinezo.jp/pc/schedule?ush=1703de7'))
+          reply_text = get_movies_info_text(get_movies_kinezo('https://tjoy.jp/yokohama_burg13'))
         end
         message = {
           type: 'text',
